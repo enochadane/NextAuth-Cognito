@@ -1,4 +1,6 @@
-export function App() {
+"use client";
+
+export default function App() {
   return (
     <>
       <h1>Hello {"user?.username"}</h1>
@@ -6,5 +8,3 @@ export function App() {
     </>
   );
 }
-
-export default App;
