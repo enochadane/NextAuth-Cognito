@@ -1,11 +1,5 @@
 import type { NextAuthOptions } from "next-auth";
 import CognitoProvider from "next-auth/providers/cognito";
-import CredentialsProvider from "next-auth/providers/credentials";
-
-import { custom } from "openid-client";
-custom.setHttpOptionsDefaults({
-  timeout: 5000,
-});
 
 export const options: NextAuthOptions = {
   providers: [
@@ -13,22 +7,46 @@ export const options: NextAuthOptions = {
       clientId: process.env.COGNITO_CLIENT_ID as string,
       clientSecret: "",
       issuer: process.env.COGNITO_ISSUER,
+      httpOptions: {
+        timeout: 400000,
+      },
+      client: {
+        token_endpoint_auth_method: "none",
+      },
     }),
   ],
   callbacks: {
-    async signIn(user: any): Promise<boolean> {
-      console.log(user, "user log from signIn callback");
-      const userProfile = user.profile;
-      // check if user is in group
-      // if (
-      //   userProfile &&
-      //   userProfile["cognito:groups"] &&
-      //   Array.isArray(userProfile["cognito:groups"])
-      // ) {
-      //   // Check if the specified group name exists in the 'cognito:groups' array
-      //   return userProfile["cognito:groups"].includes("superusers");
-      // }
+    async signIn({
+      user,
+      account,
+      profile,
+      email,
+      credentials,
+    }): Promise<boolean> {
+      user.name = (profile as { "cognito:username": string })[
+        "cognito:username"
+      ];
+      console.log(user, account, profile, "signIn callaback called");
+      if (!user) {
+        return false;
+      }
       return true;
+    },
+    async redirect({ url, baseUrl }) {
+      console.log(url, baseUrl, "redirect callback called");
+      return baseUrl;
+    },
+    async session({ session, user, token }) {
+      if (token.accessToken) {
+        session.accessToken = token.accessToken as string;
+      }
+      console.log(session, token, "session callback called");
+      return session;
+    },
+    async jwt({ token, user, account, profile, isNewUser }) {
+      token.accessToken = account?.access_token;
+      console.log(token, account, "jwt callback called");
+      return token;
     },
   },
 };
