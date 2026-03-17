@@ -6,9 +6,9 @@
     "resourceNameTruncated": "amplif607a3742",
     "userPoolName": "amplifyauth_userpool_607a3742",
     "autoVerifiedAttributes": [
-      "email"
+      "phone_number"
     ],
-    "mfaConfiguration": "OFF",
+    "mfaConfiguration": "OPTIONAL",
     "mfaTypes": [
       "SMS Text Message"
     ],
@@ -26,18 +26,22 @@
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [
+      "locale",
+      "given_name",
       "email"
     ],
     "userpoolClientReadAttributes": [
-      "email"
+      "birthdate",
+      "email",
+      "given_name"
     ],
     "userpoolClientLambdaRole": "amplif607a3742_userpoolclient_lambda_role",
-    "userpoolClientSetAttributes": false,
+    "userpoolClientSetAttributes": true,
     "authSelections": "identityPoolAndUserPool",
     "resourceName": "amplifyauth",
     "sharedId": "607a3742",
     "serviceName": "Cognito",
-    "useDefault": "default",
+    "useDefault": "manual",
     "authRoleArn": {
       "Fn::GetAtt": [
         "AuthRole",
@@ -54,7 +58,18 @@
     "useEnabledMfas": true,
     "dependsOn": [],
     "hostedUI": false,
-    "userPoolGroupList": [],
-    "authProviders": []
+    "userPoolGroupList": [
+      "superusers"
+    ],
+    "authProviders": [],
+    "thirdPartyAuth": false,
+    "userPoolGroups": false,
+    "adminQueries": false,
+    "triggers": {},
+    "adminQueryGroup": "superusers",
+    "parentStack": {
+      "Ref": "AWS::StackId"
+    },
+    "permissions": []
   }
 }
